@@ -11,7 +11,7 @@ const double rho_particle = 5000.0, d_particle = 5.0 * std::pow(10.0, -6.0), rho
 
 double ExectSol(double vp) {
     double v = 600.0;
-    return 1 / C * (v / (v - vp) + log2(v - vp) - (1 + log2(v)));
+    return 1 / C * (v / (v - vp) + log(v - vp) - (1 + log(v)));
 }
 
 double V(double z) {
@@ -32,7 +32,7 @@ int main() {
     std::vector<double> initial_condition{0., 0.};
 
     double t_begin = 0.0;
-    double t_end = 0.65;
+    double t_end = 0.25;
     double epsilon = 0.000001;
 
     RKM rkm;
