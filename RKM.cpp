@@ -94,23 +94,23 @@ double calc_epsilon(const std::vector<double>& epsilon_vec, const std::vector<do
     return sum_of_y_power2 < 1 ? 0.000001 : sqrt(sum_of_epsilon_power2 / sum_of_y_power2);
 }
 
-void RKM::solve(double t_begin, double t_end, const std::vector<double>& init_conditions, double epsilon) {
+void RKM::solve(double t_begin, double t_end, const std::vector<double>& init_conditions, double epsilon, double& epsilon_computed) {
     assert(init_conditions.size() == functions_.size());
 
     t_ = t_begin;
 
     Y = init_conditions;
 
-    file.open("speed.txt");
+    //file.open("speed.txt");
     size_t iter = 0;
     while (t_ < t_end) {
-        std::cout << t_ << " " << Y[0] << std::endl;
+        /*std::cout << t_ << " " << Y[0] << std::endl;
         if (iter % 100 == 0) {
             file << std::fixed << t_;
             for (auto el: Y)
                 file << " " << el;
             file << " " << V(Y[0]) << " "<< ExectSol(Y[1]) <<std::endl;
-        }
+        }*/
         K1 = h / 3.0 * (*this)(t_, Y);
         K2 = h / 3.0 * (*this)(t_ + h / 3.0, Y + K1);
         K3 = h / 3.0 * (*this)(t_ + h / 3.0, Y + K1 / 2.0 + K2 / 2.0);
@@ -126,5 +126,5 @@ void RKM::solve(double t_begin, double t_end, const std::vector<double>& init_co
         ++iter;
     }
 
-    file.close();
+    //file.close();
 }

@@ -31,7 +31,7 @@ public:
     RKM() = default;
     RKM(const std::vector<std::function<function_type>>& functions);
     void init(const std::vector<std::function<function_type>>& functions);
-    void solve(double t_begin, double t_end, const std::vector<double>& init_conditions, double epsilon);
+    void solve(double t_begin, double t_end, const std::vector<double>& init_conditions, double epsilon, double& epsilon_computed);
 };
 
 

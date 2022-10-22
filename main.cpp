@@ -34,11 +34,12 @@ int main() {
     double t_begin = 0.0;
     double t_end = 0.25;
     double epsilon = 0.000001;
+    double epsilon_computed;
 
     RKM rkm;
 
     rkm.init(functions);
-    rkm.solve(t_begin, t_end, initial_condition, epsilon);
+    rkm.solve(t_begin, t_end, initial_condition, epsilon, epsilon_computed);
 
 
     return 0;
