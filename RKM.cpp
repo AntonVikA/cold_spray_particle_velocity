@@ -94,7 +94,7 @@ double calc_epsilon(const std::vector<double>& epsilon_vec, const std::vector<do
     return sum_of_y_power2 < 1 ? 0.000001 : sqrt(sum_of_epsilon_power2 / sum_of_y_power2);
 }
 
-void RKM::solve(double t_begin, double t_end, const std::vector<double>& init_conditions, double epsilon, double& epsilon_computed) {
+void RKM::solve(double t_begin, double t_end, const std::vector<double>& init_conditions, double h, double& epsilon_computed) {
     assert(init_conditions.size() == functions_.size());
 
     t_ = t_begin;
@@ -103,7 +103,9 @@ void RKM::solve(double t_begin, double t_end, const std::vector<double>& init_co
 
     //file.open("speed.txt");
     size_t iter = 0;
-    while (t_ < t_end) {
+    size_t n = t_end / h;
+    std::cout << " n = " << n << std::endl;
+    for (size_t i = 0; i < n; ++i) {
         /*std::cout << t_ << " " << Y[0] << std::endl;
         if (iter % 100 == 0) {
             file << std::fixed << t_;
@@ -111,20 +113,22 @@ void RKM::solve(double t_begin, double t_end, const std::vector<double>& init_co
                 file << " " << el;
             file << " " << V(Y[0]) << " "<< ExectSol(Y[1]) <<std::endl;
         }*/
-        K1 = h / 3.0 * (*this)(t_, Y);
-        K2 = h / 3.0 * (*this)(t_ + h / 3.0, Y + K1);
-        K3 = h / 3.0 * (*this)(t_ + h / 3.0, Y + K1 / 2.0 + K2 / 2.0);
-        K4 = h / 3.0 * (*this)(t_ + h / 2.0, Y + 3.0 / 8.0 * K1 + 9.0 / 8.0 * K3);
-        K5 = h / 3.0 * (*this)(t_ + h, Y + 3.0 / 2.0 * K1 - 9.0 / 2.0 * K3 + 6.0 * K4);
+        K1 = h * (*this)(t_, Y);
+        K2 = h * (*this)(t_ + h / 2.0, Y + K1 / 2.0);
+        K3 = h * (*this)(t_ + h / 2.0, Y + K2 / 2.0);
+        K4 = h * (*this)(t_ + h, Y + K3);
+        //K5 = h / 3.0 * (*this)(t_ + h, Y + 3.0 / 2.0 * K1 - 9.0 / 2.0 * K3 + 6.0 * K4);
 
-        epsilon_vec = 1.0 / 5.0 * (K1 + 4.0 * K4 - 9.0 / 2.0 * K3 - K5 / 2.0);
+        //epsilon_vec = 1.0 / 5.0 * (K1 + 4.0 * K4 - 9.0 / 2.0 * K3 - K5 / 2.0);
         //epsilon_t = calc_epsilon(epsilon_vec, Y);
         //h = h * std::pow(std::abs(epsilon_t / epsilon) + 0.001, -0.2);
         t_ += h;
-        dY = 1.0 / 2.0 * (K1 + 4.0 * K4 + K5);
+        dY = 1.0 / 6.0 * (K1 + 2.0 * K2 + 2.0 * K3 + K4);
         Y = Y + dY;
-        ++iter;
+        //file << Y[1] << " " << ExectSol(Y[1]) << " " << Y[0] << std::endl;
     }
+    //std::cout << "solution: " << ExectSol(t_) << " " << Y[0] << " " << ExectSol(t_)  - Y[0] << std::endl;
+    epsilon_computed = std::abs(ExectSol(Y[1]) - Y[0]);
 
     //file.close();
 }
